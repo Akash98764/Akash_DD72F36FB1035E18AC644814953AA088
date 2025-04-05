@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Real-Time Weather Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #89f7fe, #66a6ff);
+      color: #333;
+      text-align: center;
+      padding: 2rem;
+    }
+    .container {
+      background: white;
+      border-radius: 15px;
+      padding: 2rem;
+      max-width: 400px;
+      margin: auto;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    input {
+      padding: 0.5rem;
+      width: 80%;
+      margin-bottom: 1rem;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      background-color: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .weather-info {
+      margin-top: 1.5rem;
+    }
+    .weather-icon {
+      width: 80px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Weather Dashboard</h1>
+    <input type="text" id="cityInput" placeholder="Enter city name" />
+    <button onclick="getWeather()">Get Weather</button>
+
+    <div id="weather" class="weather-info"></div>
+  </div>
+
+  <script>
+    async function getWeather() {
+      const city = document.getElementById("cityInput").value;
+      const apiKey = "2e5407ff78a4ba569ab209af034a3628"; // Replace with your OpenWeather API key
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+      const weatherDiv = document.getElementById("weather");
+      weatherDiv.innerHTML = "Loading...";
+
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("City not found");
+
+        const data = await response.json();
+        const icon = data.weather[0].icon;
+        const description = data.weather[0].description;
+        const temp = data.main.temp;
+        const humidity = data.main.humidity;
+
+        weatherDiv.innerHTML = `
+          <h2>${city.toUpperCase()}</h2>
+          <img class="weather-icon" src="https://openweathermap.org/img/wn/${icon}@2x.png" alt="${description}" />
+          <p><strong>Condition:</strong> ${description}</p>
+          <p><strong>Temperature:</strong> ${temp}&deg;C</p>
+          <p><strong>Humidity:</strong> ${humidity}%</p>
+        `;
+      } catch (error) {
+        weatherDiv.innerHTML = `<p style="color:red">${error.message}</p>`;
+      }
+    }
+  </script>
+</body>
+</html>
